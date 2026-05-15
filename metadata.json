@@ -1,0 +1,8 @@
+{
+  "name": "Siri-Dhanya Smart Agri Hub",
+  "description": "Digital Archive of Climate-Resilient Grains. Comprehensive platform for millet information, nutritional profiles, market intelligence, and AI-powered farming assistance.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}

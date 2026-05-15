@@ -1,0 +1,63 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 0.1 Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. User Validation Helper
+    function isValidUser(data) {
+      return data.keys().hasAll(['firstName', 'lastName', 'createdAt']) 
+        && data.keys().size() <= 5
+        && data.firstName is string && data.firstName.size() >= 1 && data.firstName.size() <= 100
+        && data.lastName is string && data.lastName.size() >= 1 && data.lastName.size() <= 100
+        && data.createdAt == request.time
+        && (!('email' in data) || (data.email is string && data.email.size() <= 200))
+        && (!('phone' in data) || (data.phone is string && data.phone.size() <= 20));
+    }
+
+    // 2. Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Users should not be listable
+      
+      allow create: if isOwner(userId) 
+        && isValidId(userId)
+        && isValidUser(incoming());
+        
+      allow update: if isOwner(userId)
+        && isValidUser(incoming())
+        && incoming().createdAt == existing().createdAt // Immutable
+        && incoming().diff(existing()).affectedKeys().hasOnly(['firstName', 'lastName', 'email', 'phone']);
+    }
+
+    // 3. Millets Collection
+    match /millets/{milletId} {
+      allow read: if true; // Anyone can view millets
+      allow write: if isSignedIn(); // Only signed-in users (e.g. admin) can add/edit
+    }
+  }
+}

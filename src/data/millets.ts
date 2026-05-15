@@ -1,0 +1,211 @@
+import { Millet } from '../types';
+
+export const millets: Millet[] = [
+  {
+    id: 'ragi',
+    name: 'Finger Millet',
+    scientificName: 'Eleusine coracana',
+    kannadaName: 'ರಾಗಿ (Ragi)',
+    description: 'A highly nutritious millet known for its exceptionally high calcium content. Its seeds are small, round, and reddish-brown.',
+    benefits: ['High Calcium', 'Gluten-free', 'Good for diabetics'],
+    nutritionalValues: [
+      { label: 'Calcium', value: '344', unit: 'mg' },
+      { label: 'Protein', value: '7.3', unit: 'g' },
+      { label: 'Fiber', value: '3.6', unit: 'g' },
+      { label: 'Iron', value: '3.9', unit: 'mg' }
+    ],
+    color: '#8B4513',
+    imageAlt: 'Finger Millet Grains',
+    imageUrl: '/images/ragi.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Eleusine_coracana_-_Finger_millet.jpg/800px-Eleusine_coracana_-_Finger_millet.jpg',
+    recipeImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Ragi_mudde.jpg/800px-Ragi_mudde.jpg',
+    searchUrl: '',
+    youtubeId: 'YsGRubBuFJ0',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'jola',
+    name: 'Sorghum',
+    scientificName: 'Sorghum bicolor',
+    kannadaName: 'ಜೋಳ (Jola)',
+    description: 'Tall-growing cereal plant used for food and fodder. Known as Jowar.',
+    benefits: ['Rich in antioxidants', 'Gluten-free'],
+    nutritionalValues: [
+      { label: 'Protein', value: '11.3', unit: 'g' },
+      { label: 'Carbs', value: '74.7', unit: 'g' },
+      { label: 'Fiber', value: '6.3', unit: 'g' },
+      { label: 'Iron', value: '4.1', unit: 'mg' }
+    ],
+    color: '#FFFACD',
+    imageAlt: 'Sorghum Grains',
+    imageUrl: '/images/jola.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Sorghum_bicolor_cluster.jpg/800px-Sorghum_bicolor_cluster.jpg',
+    recipeImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ee/Jolada_Rotti_and_Ennegayi.jpg',
+    searchUrl: '',
+    youtubeId: 'tF3lAGDcHNk',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'sajje',
+    name: 'Pearl Millet',
+    scientificName: 'Pennisetum glaucum',
+    kannadaName: 'ಸಜ್ಜೆ (Sajje)',
+    description: 'Recognizable by its long, cylindrical ear-heads. Powerhouse of Iron and Zinc.',
+    benefits: ['Rich in Iron', 'High Protein'],
+    nutritionalValues: [
+      { label: 'Iron', value: '8.0', unit: 'mg' },
+      { label: 'Protein', value: '11.6', unit: 'g' },
+      { label: 'Fiber', value: '1.2', unit: 'g' },
+      { label: 'Zinc', value: '3.1', unit: 'mg' }
+    ],
+    color: '#708090',
+    imageAlt: 'Pearl Millet Plant',
+    imageUrl: '/images/sajje.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Pearl_millet_%28Pennisetum_glaucum%29.jpg/800px-Pearl_millet_%28Pennisetum_glaucum%29.jpg',
+    recipeImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Bajra_Roti_with_Baingan_Bhartu.jpg/800px-Bajra_Roti_with_Baingan_Bhartu.jpg',
+    searchUrl: '',
+    youtubeId: 'cHDq7hBBqb8',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'navane',
+    name: 'Foxtail Millet',
+    scientificName: 'Setaria italica',
+    kannadaName: 'ನವಣೆ (Navane)',
+    description: 'Small, yellow, bead-like grains. One of the oldest cultivated crops.',
+    benefits: ['Vitamin B12', 'Detoxifies body'],
+    nutritionalValues: [
+      { label: 'Fiber', value: '8.0', unit: 'g' },
+      { label: 'Protein', value: '12.3', unit: 'g' },
+      { label: 'Carbs', value: '60.6', unit: 'g' },
+      { label: 'Calcium', value: '31', unit: 'mg' }
+    ],
+    color: '#DAA520',
+    imageAlt: 'Foxtail Millet Seeds',
+    imageUrl: '/images/navane.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Foxtail_millet_%28Setaria_italica%29.jpg/800px-Foxtail_millet_%28Setaria_italica%29.jpg',
+    recipeImageUrl: '',
+    searchUrl: '',
+    youtubeId: 'XqTpSNbsEbk',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'saame',
+    name: 'Little Millet',
+    scientificName: 'Panicum sumatrense',
+    kannadaName: 'ಸಾಮೆ (Saame)',
+    description: 'Very small grains packed with magnesium and B-vitamins.',
+    benefits: ['Heart health', 'Respiratory health'],
+    nutritionalValues: [
+      { label: 'Magnesium', value: '114', unit: 'mg' },
+      { label: 'Protein', value: '7.7', unit: 'g' },
+      { label: 'Fiber', value: '7.6', unit: 'g' },
+      { label: 'Iron', value: '9.3', unit: 'mg' }
+    ],
+    color: '#FFF8DC',
+    imageAlt: 'Little Millet Grains',
+    imageUrl: '/images/saame.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Panicum_sumatrense.jpg/800px-Panicum_sumatrense.jpg',
+    recipeImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Little_millet_upma.jpg/800px-Little_millet_upma.jpg',
+    searchUrl: '',
+    youtubeId: 'RqBBVMbKDKs',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'harka',
+    name: 'Kodo Millet',
+    scientificName: 'Paspalum scrobiculatum',
+    kannadaName: 'ಹಾರಕ (Harka)',
+    description: 'Traditional grain known for its high dietary fiber.',
+    benefits: ['Antioxidant rich', 'Immunity booster'],
+    nutritionalValues: [
+      { label: 'Fiber', value: '9.0', unit: 'g' },
+      { label: 'Protein', value: '8.3', unit: 'g' },
+      { label: 'Carbs', value: '65.9', unit: 'g' },
+      { label: 'Iron', value: '0.5', unit: 'mg' }
+    ],
+    color: '#BC8F8F',
+    imageAlt: 'Kodo Millet Plant',
+    imageUrl: '/images/harka.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Paspalum_scrobiculatum.jpg/800px-Paspalum_scrobiculatum.jpg',
+    recipeImageUrl: '',
+    searchUrl: '',
+    youtubeId: 'YsGRubBuFJ0',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'oodalu',
+    name: 'Barnyard Millet',
+    scientificName: 'Echinochloa frumentacea',
+    kannadaName: 'ಊದಲು (Oodalu)',
+    description: 'The fastest-growing millet, excellent for weight management.',
+    benefits: ['Low carbs', 'High Fiber'],
+    nutritionalValues: [
+      { label: 'Iron', value: '15.2', unit: 'mg' },
+      { label: 'Protein', value: '6.2', unit: 'g' },
+      { label: 'Fiber', value: '10.1', unit: 'g' },
+      { label: 'Carbs', value: '65.5', unit: 'g' }
+    ],
+    color: '#E0E0E0',
+    imageAlt: 'Barnyard Millet Grains',
+    imageUrl: '/images/oodalu.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Echinochloa_frumentacea.jpg/800px-Echinochloa_frumentacea.jpg',
+    recipeImageUrl: '',
+    searchUrl: '',
+    youtubeId: 'cHDq7hBBqb8',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'baragu',
+    name: 'Proso Millet',
+    scientificName: 'Panicum miliaceum',
+    kannadaName: 'ಬರಗು (Baragu)',
+    description: 'High protein content and gluten-free with a mild flavor.',
+    benefits: ['Nerve health', 'Phosphorus rich'],
+    nutritionalValues: [
+      { label: 'Protein', value: '12.5', unit: 'g' },
+      { label: 'Fiber', value: '2.2', unit: 'g' },
+      { label: 'Carbs', value: '70.4', unit: 'g' },
+      { label: 'Calcium', value: '14', unit: 'mg' }
+    ],
+    color: '#F5DEB3',
+    imageAlt: 'Proso Millet Grains',
+    imageUrl: '/images/baragu.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Panicum_miliaceum.jpg/800px-Panicum_miliaceum.jpg',
+    recipeImageUrl: '',
+    searchUrl: '',
+    youtubeId: 'XqTpSNbsEbk',
+    ingredients: [],
+    process: []
+  },
+  {
+    id: 'korale',
+    name: 'Browntop Millet',
+    scientificName: 'Urochloa ramosa',
+    kannadaName: 'ಕೊರಲೆ (Korale)',
+    description: 'Nutrient-dense rare millet, famous for detoxifying properties.',
+    benefits: ['Gut health', 'BP regulation'],
+    nutritionalValues: [
+      { label: 'Fiber', value: '12.5', unit: 'g' },
+      { label: 'Protein', value: '11.5', unit: 'g' },
+      { label: 'Carbs', value: '60.1', unit: 'g' },
+      { label: 'Iron', value: '7.5', unit: 'mg' }
+    ],
+    color: '#8B7355',
+    imageAlt: 'Browntop Millet Plant',
+    imageUrl: '/images/korale.jpg',
+    earImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Urochloa_ramosa.jpg/800px-Urochloa_ramosa.jpg',
+    recipeImageUrl: '',
+    searchUrl: '',
+    youtubeId: 'tF3lAGDcHNk',
+    ingredients: [],
+    process: []
+  }
+];
