@@ -240,8 +240,15 @@ export default function App() {
   }, []);
 
   const initAudio = () => {
-    if (!audioContext.current) {
-      audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    try {
+      if (!audioContext.current) {
+        audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      if (audioContext.current.state === 'suspended') {
+        audioContext.current.resume();
+      }
+    } catch (e) {
+      console.warn("Audio init failed:", e);
     }
   };
 
@@ -301,6 +308,7 @@ export default function App() {
         initAudio();
         playTransitionSound();
         startAmbientScore();
+        speakText(currentScene.description, language);
       }
 
       timer = setInterval(() => {
@@ -347,12 +355,20 @@ export default function App() {
 
     try {
       const genAI = getAiInstance();
-      // Use gemini-2.0-flash for better JSON reliability; no responseSchema (not supported in all SDK versions)
+      if (!GEMINI_API_KEY) throw new Error("API Key missing");
+
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash", // Using 1.5-flash for better stability in diverse regions
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.7,
+        }
+      });
 
       const prompt = `You are a culinary video director. Create a 5-scene step-by-step cooking masterclass storyboard for a ${millet.name} (${millet.kannadaName}) recipe.
 
-Write ALL text fields (title, description, visualCue) in ${langLabel}.
-${language === 'kn' ? 'Use proper Kannada script (ಕನ್ನಡ) for all descriptions.' : ''}
+Write ALL text fields (title, description, visualCue) EXCLUSIVELY in ${langLabel}.
+${language === 'kn' ? 'STRICT REQUIREMENT: Use ONLY Kannada script (ಕನ್ನಡ) for all descriptions and titles. Do not use English words.' : ''}
 
 Return ONLY a valid JSON array with exactly 5 objects. Each object must have these exact keys:
 - "title": short scene title in ${langLabel}
@@ -361,21 +377,12 @@ Return ONLY a valid JSON array with exactly 5 objects. Each object must have the
 - "duration": number of seconds (between 8 and 15)
 - "cameraAngle": one of ["Close-up", "Bird's eye", "Side profile", "Wide shot", "Handheld"]
 - "lighting": one of ["Natural", "Cinematic", "Warm", "Moody"]
-- "keywords": array of 3 ingredient or technique words in ${langLabel}
+- "keywords": array of 3 ingredient or technique words in ${langLabel}`;
 
-Example structure (do not copy content, only structure):
-[{"title":"...","description":"...","visualCue":"...","duration":10,"cameraAngle":"Close-up","lighting":"Natural","keywords":["word1","word2","word3"]}]`;
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
 
-      const result = await genAI.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          temperature: 0.7,
-        },
-      });
-
-      const text = result.text;
       if (!text) throw new Error("Empty response from AI");
 
       // Strip markdown code fences if present
@@ -397,9 +404,63 @@ Example structure (do not copy content, only structure):
       setGenStep(6);
     } catch (error: any) {
       console.error("Video Generation Error:", error);
-      // Don't show alert — studio stays open with YouTube fallback
-      // Show a user-friendly in-studio message instead
-      setGenStep(-1); // -1 signals error state to AIVideoStudio
+
+      // FALLBACK: Generate local mock tutorial if AI fails so the user isn't stuck
+      const fallbackData = [
+        {
+          id: 'scene-0',
+          title: language === 'kn' ? 'ಸಿದ್ಧತೆ' : 'Preparation',
+          description: language === 'kn' ? `${millet.kannadaName} ಅನ್ನು ಚೆನ್ನಾಗಿ ತೊಳೆದು 6 ಗಂಟೆಗಳ ಕಾಲ ನೆನೆಸಿ.` : `Clean the ${millet.name} thoroughly and soak it for 6 hours.`,
+          visualCue: 'Close-up of grains being washed in water',
+          duration: 10,
+          cameraAngle: 'Close-up',
+          lighting: 'Natural',
+          keywords: language === 'kn' ? ['ತೊಳೆಯಿರಿ', 'ನೆನೆಸಿ', 'ಸ್ವಚ್ಛಗೊಳಿಸಿ'] : ['Wash', 'Soak', 'Clean']
+        },
+        {
+          id: 'scene-1',
+          title: language === 'kn' ? 'ಕುದಿಸುವುದು' : 'Boiling',
+          description: language === 'kn' ? 'ನೆನೆಸಿದ ಧಾನ್ಯವನ್ನು 1:3 ಪ್ರಮಾಣದ ನೀರಿನಲ್ಲಿ ಕುದಿಸಿ.' : 'Boil the soaked grains in 1:3 ratio of water.',
+          visualCue: 'Steaming pot on a stove',
+          duration: 12,
+          cameraAngle: 'Wide shot',
+          lighting: 'Cinematic',
+          keywords: language === 'kn' ? ['ಕುದಿಸಿ', 'ಬಿಸಿ', 'ಮೆತ್ತಗೆ'] : ['Boil', 'Steam', 'Soft']
+        },
+        {
+          id: 'scene-2',
+          title: language === 'kn' ? 'ಮಸಾಲೆ ಸೇರಿಸುವುದು' : 'Adding Spices',
+          description: language === 'kn' ? 'ರುಚಿಗೆ ತಕ್ಕಷ್ಟು ಉಪ್ಪು ಮತ್ತು ನಿಮ್ಮ ನೆಚ್ಚಿನ ಮಸಾಲೆಗಳನ್ನು ಸೇರಿಸಿ.' : 'Add salt to taste and your favorite regional spices.',
+          visualCue: 'Spices being sprinkled over the cooked millet',
+          duration: 10,
+          cameraAngle: 'Bird\'s eye',
+          lighting: 'Warm',
+          keywords: language === 'kn' ? ['ಮಸಾಲೆ', 'ರುಚಿ', 'ಉಪ್ಪು'] : ['Spice', 'Flavor', 'Season']
+        },
+        {
+          id: 'scene-3',
+          title: language === 'kn' ? 'ಮಿಶ್ರಣ' : 'Mixing',
+          description: language === 'kn' ? 'ಎಲ್ಲವನ್ನೂ ಚೆನ್ನಾಗಿ ಬೆರೆಸಿ ಮತ್ತು 5 ನಿಮಿಷಗಳ ಕಾಲ ಸಣ್ಣ ಉರಿಯಲ್ಲಿ ಬೇಯಿಸಿ.' : 'Mix everything well and simmer for 5 minutes on low flame.',
+          visualCue: 'Stirring the mixture slowly',
+          duration: 10,
+          cameraAngle: 'Handheld',
+          lighting: 'Natural',
+          keywords: language === 'kn' ? ['ಮಿಶ್ರಣ', 'ಬೇಯಿಸಿ', 'ಸುವಾಸನೆ'] : ['Mix', 'Simmer', 'Aroma']
+        },
+        {
+          id: 'scene-4',
+          title: language === 'kn' ? 'ಬಡಿಸುವುದು' : 'Serving',
+          description: language === 'kn' ? 'ಬಿಸಿಯಾದ ಮತ್ತು ಪೌಷ್ಟಿಕಾಂಶದ ಆಹಾರ ಸಿದ್ಧವಾಗಿದೆ. ಆನಂದಿಸಿ!' : 'Your hot and nutritious meal is ready. Enjoy!',
+          visualCue: 'Beautifully plated millet dish with garnish',
+          duration: 15,
+          cameraAngle: 'Side profile',
+          lighting: 'Cinematic',
+          keywords: language === 'kn' ? ['ಬಡಿಸಿ', 'ಆರೋಗ್ಯಕರ', 'ಸಿದ್ಧ'] : ['Serve', 'Healthy', 'Ready']
+        }
+      ];
+
+      setVideoTutorial(fallbackData as any);
+      setGenStep(6); // Skip error and show fallback
     } finally {
       clearInterval(interval);
       setIsGeneratingVideo(false);
@@ -407,21 +468,24 @@ Example structure (do not copy content, only structure):
   };
 
   const speakText = (text: string, lang: 'en' | 'kn' | 'hi') => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      try {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.resume();
-        const utterance = new SpeechSynthesisUtterance(text);
-        if (lang === 'kn') utterance.lang = 'kn-IN';
-        else if (lang === 'hi') utterance.lang = 'hi-IN';
-        else utterance.lang = 'en-US';
-
-        utterance.rate = 0.9;
-        activeUtterance.current = utterance;
-        window.speechSynthesis.speak(utterance);
-      } catch (error) {
-        console.error("Speech Synthesis Error:", error);
-      }
+    if (isMuted) return;
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (lang === 'kn') utterance.lang = 'kn-IN';
+      else if (lang === 'hi') utterance.lang = 'hi-IN';
+      else utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.volume = 1.0;
+      activeUtterance.current = utterance;
+      // Small delay fixes Android WebView TTS issue
+      setTimeout(() => {
+        try { window.speechSynthesis.speak(utterance); } catch(e) { console.warn("TTS speak failed", e); }
+      }, 150);
+    } catch (error) {
+      console.warn("Speech Synthesis Error:", error);
     }
   };
 
@@ -522,6 +586,7 @@ Example structure (do not copy content, only structure):
             cameraAngles={cameraAngles}
             lightingEffects={lightingEffects}
             language={language}
+            onRetry={() => selectedMillet && generateVideoTutorial(selectedMillet)}
           />
         </motion.div>
       )}

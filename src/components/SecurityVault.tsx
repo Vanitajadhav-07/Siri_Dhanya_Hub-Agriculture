@@ -4,7 +4,7 @@ import {
   ShieldCheck, Lock, Eye, Key, 
   Smartphone, Bell, ShieldAlert,
   Fingerprint, FileLock, Wifi,
-  ChevronRight, RefreshCw, X
+  ChevronRight, RefreshCw, X, CheckCircle
 } from 'lucide-react';
 
 interface SecurityVaultProps {
@@ -92,12 +92,15 @@ export const SecurityVault: React.FC<SecurityVaultProps> = ({ language = 'en' })
 
   const [logs, setLogs] = useState(securityLogs);
   const [isScanning, setIsScanning] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const startSecurityScan = () => {
     setIsScanning(true);
+    setNotification(null);
     setTimeout(() => {
       setIsScanning(false);
-      alert('SECURITY SCAN COMPLETE: Cloud nodes verified. No unauthorized digital traces found in your farm ledger.');
+      setNotification('SCAN COMPLETE: All digital farm nodes are secured.');
+      setTimeout(() => setNotification(null), 3000);
       // Automatically resolve any pending breaches after a scan
       setLogs(prev => prev.map(log => ({ ...log, status: 'RESOLVED' })));
     }, 2500);
@@ -110,7 +113,8 @@ export const SecurityVault: React.FC<SecurityVaultProps> = ({ language = 'en' })
       }
       return log;
     }));
-    alert('SECURE FIX APPLIED: Patch deployed to local beacon. Breach status cleared.');
+    setNotification('FIX APPLIED: Security breach has been resolved.');
+    setTimeout(() => setNotification(null), 3000);
   };
 
   const handleUnlock = () => {
@@ -118,7 +122,8 @@ export const SecurityVault: React.FC<SecurityVaultProps> = ({ language = 'en' })
       setIsLocked(false);
       setPin('');
     } else {
-      alert('Access Denied: Invalid Security Token');
+      setNotification('Access Denied: Invalid Security Token');
+      setTimeout(() => setNotification(null), 3000);
       setPin('');
     }
   };
@@ -191,7 +196,8 @@ export const SecurityVault: React.FC<SecurityVaultProps> = ({ language = 'en' })
                           }, 300);
                         } else if (newPin.length === 4) {
                           setTimeout(() => {
-                            alert('Access Denied: Invalid Security Token');
+                            setNotification('Access Denied: Invalid Security Token');
+                            setTimeout(() => setNotification(null), 3000);
                             setPin('');
                           }, 300);
                         }
@@ -271,6 +277,28 @@ export const SecurityVault: React.FC<SecurityVaultProps> = ({ language = 'en' })
                   {isScanning ? t.scanning : t.securityScan}
                 </button>
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Floating Notification */}
+        <AnimatePresence>
+          {notification && (
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="absolute bottom-10 left-8 right-8 z-50 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                  <ShieldCheck size={18} />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-wider">{notification}</p>
+              </div>
+              <button onClick={() => setNotification(null)}>
+                <X size={14} className="text-slate-500" />
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

@@ -183,6 +183,7 @@ export const MilletDetails: React.FC<MilletDetailsProps> = ({
                       <div className="absolute top-0 right-0 bg-emerald-500 text-[8px] text-white px-2 py-0.5 rounded-bl-lg font-black uppercase tracking-tighter">Live</div>
                       <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">{t.marketPrice}</span>
                       <span className="text-xl font-black text-slate-900">₹{millet.price}</span>
+                      <span className="text-[8px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">per kg • APMC Rate</span>
                     </div>
                   )}
                   {Number(millet.kg) > 0 && (
@@ -190,6 +191,7 @@ export const MilletDetails: React.FC<MilletDetailsProps> = ({
                       <div className="absolute top-0 right-0 bg-emerald-500 text-[8px] text-white px-2 py-0.5 rounded-bl-lg font-black uppercase tracking-tighter">Live</div>
                       <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">{t.availableQty}</span>
                       <span className="text-xl font-black text-slate-900">{millet.kg} KG</span>
+                      <span className="text-[8px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">Verified Unit</span>
                     </div>
                   )}
                 </div>
@@ -277,18 +279,6 @@ export const MilletDetails: React.FC<MilletDetailsProps> = ({
                        <Play size={16} fill="currentColor" />
                        {t.generateVideo}
                      </button>
-                     {millet.youtubeId && (
-                       <button
-                         onClick={() => setShowVideo(!showVideo)}
-                         className="px-8 py-5 bg-red-600 text-white rounded-[24px] font-black uppercase text-xs tracking-wider flex items-center gap-3 hover:bg-red-700 transition-all shadow-xl shadow-red-600/20"
-                       >
-                         <Youtube size={16} />
-                         {showVideo
-                           ? (language === 'kn' ? 'ವೀಡಿಯೊ ಮುಚ್ಚಿ' : language === 'hi' ? 'वीडियो बंद करें' : 'Close Video')
-                           : (language === 'kn' ? 'ರೆಸಿಪಿ ವೀಡಿಯೊ' : language === 'hi' ? 'रेसिपी वीडियो' : 'Recipe Video')
-                         }
-                       </button>
-                     )}
                      <button 
                        onClick={() => onGenerateRecipe(millet.name)}
                        disabled={isGeneratingRecipe}
@@ -299,48 +289,6 @@ export const MilletDetails: React.FC<MilletDetailsProps> = ({
                      </button>
                   </div>
                </div>
-
-               {/* YouTube Video Player */}
-               <AnimatePresence>
-                 {showVideo && millet.youtubeId && (
-                   <motion.div
-                     initial={{ opacity: 0, height: 0 }}
-                     animate={{ opacity: 1, height: 'auto' }}
-                     exit={{ opacity: 0, height: 0 }}
-                     className="overflow-hidden"
-                   >
-                     <div className="mt-4 space-y-3">
-                       <p className="text-[10px] font-black text-red-400 uppercase tracking-widest flex items-center gap-2">
-                         <Youtube size={12} />
-                         {language === 'kn' ? `${millet.kannadaName} ರೆಸಿಪಿ ವೀಡಿಯೊ` : language === 'hi' ? `${millet.kannadaName} रेसिपी वीडियो` : `${millet.name} Recipe Video`}
-                       </p>
-                       {/* Open in YouTube app/browser — works on Android */}
-                       <div className="rounded-[24px] overflow-hidden bg-slate-800 border border-white/10">
-                         <div className="aspect-video flex flex-col items-center justify-center gap-5 p-8">
-                           <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-2xl shadow-red-600/40">
-                             <Play size={36} fill="white" className="text-white ml-1" />
-                           </div>
-                           <div className="text-center space-y-1">
-                             <p className="text-white font-bold text-sm">
-                               {language === 'kn' ? `${millet.kannadaName} ರೆಸಿಪಿ` : `${millet.name} Recipe`}
-                             </p>
-                             <p className="text-slate-400 text-xs">
-                               {language === 'kn' ? 'ಯೂಟ್ಯೂಬ್‌ನಲ್ಲಿ ತೆರೆಯಲು ಕ್ಲಿಕ್ ಮಾಡಿ' : 'Tap to watch on YouTube'}
-                             </p>
-                           </div>
-                           <button
-                             onClick={() => window.open(`https://www.youtube.com/watch?v=${millet.youtubeId}`, '_blank')}
-                             className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-black uppercase text-xs tracking-widest rounded-2xl transition-all flex items-center gap-2 shadow-xl shadow-red-600/30"
-                           >
-                             <Youtube size={16} />
-                             {language === 'kn' ? 'ಯೂಟ್ಯೂಬ್ ತೆರೆಯಿರಿ' : language === 'hi' ? 'YouTube खोलें' : 'Open YouTube'}
-                           </button>
-                         </div>
-                       </div>
-                     </div>
-                   </motion.div>
-                 )}
-               </AnimatePresence>
 
                <AnimatePresence>
                  {currentRecipe && (

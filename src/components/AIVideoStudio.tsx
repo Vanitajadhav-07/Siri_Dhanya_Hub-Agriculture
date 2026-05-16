@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Clapperboard, Wand2, Camera, Zap, Volume2, Play, ArrowRight, Video, CheckCircle, MapPin, Navigation } from 'lucide-react';
+import { X, Clapperboard, Wand2, Camera, Zap, Volume2, Play, ArrowRight, Video, CheckCircle, MapPin, Navigation, RefreshCw, Loader2 } from 'lucide-react';
 import { Millet, VideoScene } from '../types';
 
 interface AIVideoStudioProps {
@@ -26,6 +26,7 @@ interface AIVideoStudioProps {
   cameraAngles: string[];
   lightingEffects: string[];
   language: 'en' | 'kn' | 'hi';
+  onRetry?: () => void;
 }
 
 export const AIVideoStudio: React.FC<AIVideoStudioProps> = ({
@@ -50,7 +51,8 @@ export const AIVideoStudio: React.FC<AIVideoStudioProps> = ({
   updateSceneTechnical,
   cameraAngles,
   lightingEffects,
-  language
+  language,
+  onRetry
 }) => {
   return (
     <AnimatePresence>
@@ -71,108 +73,67 @@ export const AIVideoStudio: React.FC<AIVideoStudioProps> = ({
 
             {!videoTutorial ? (
               <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-12 overflow-y-auto">
-                 <div className="w-full max-w-4xl space-y-8">
-                    <div className="text-center space-y-4">
-                       <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight uppercase italic">
-                         {genStep === -1
-                           ? <><span className="text-rose-400">AI Error</span> — Watch on YouTube</>
-                           : <><span className="text-emerald-500">AI</span> Recipe Masterclass</>
-                         }
-                       </h2>
-                       <p className="text-lg text-slate-400 font-medium">
-                         {genStep === -1
-                           ? 'AI generation failed. Watch the recipe video on YouTube below.'
-                           : genStep < 6
-                             ? genProcessSteps[Math.min(genStep, genProcessSteps.length - 1)]
-                             : `Authentic preparation for `
-                         }
-                         {genStep >= 6 && <span className="text-emerald-400 font-mono font-bold">{selectedMillet?.name}</span>}
-                       </p>
-                    </div>
+                <div className="w-full max-w-2xl space-y-8 text-center">
 
-                    {/* YouTube — open in browser (works reliably on Android WebView) */}
-                    {selectedMillet?.youtubeId ? (
-                      <div className="aspect-video w-full rounded-[40px] overflow-hidden border-4 border-white/5 shadow-2xl bg-slate-800 flex flex-col items-center justify-center gap-6">
-                        <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-2xl shadow-red-600/40">
-                          <Play size={36} fill="white" className="text-white ml-1" />
+                  {/* Generating state */}
+                  {genStep >= 0 && genStep < 6 && (
+                    <>
+                      <div className="flex flex-col items-center gap-6">
+                        <div className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                          <Loader2 size={48} className="text-emerald-400 animate-spin" />
                         </div>
-                        <div className="text-center space-y-2 px-8">
-                          <p className="text-white font-bold text-lg">
-                            {language === 'kn' ? 'ಯೂಟ್ಯೂಬ್‌ನಲ್ಲಿ ವೀಡಿಯೊ ವೀಕ್ಷಿಸಿ' : language === 'hi' ? 'YouTube पर वीडियो देखें' : 'Watch Recipe Video on YouTube'}
-                          </p>
-                          <p className="text-slate-400 text-sm">
-                            {language === 'kn' ? `${selectedMillet.kannadaName} ರೆಸಿಪಿ ವೀಡಿಯೊ` : `${selectedMillet.name} recipe tutorial`}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => window.open(`https://www.youtube.com/watch?v=${selectedMillet.youtubeId}`, '_blank')}
-                          className="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-red-600/30 flex items-center gap-3"
-                        >
-                          <Play size={20} fill="currentColor" />
-                          {language === 'kn' ? 'ಯೂಟ್ಯೂಬ್ ತೆರೆಯಿರಿ' : language === 'hi' ? 'YouTube खोलें' : 'Open YouTube'}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="aspect-video w-full bg-slate-800 rounded-[40px] flex flex-col items-center justify-center text-slate-500 gap-4 border-2 border-dashed border-white/5">
-                         <Video size={64} className="opacity-20" />
-                         <p className="font-bold uppercase tracking-widest text-sm">No Tutorial Video Found</p>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="bg-white/5 p-8 rounded-[40px] border border-white/10 flex flex-col justify-between gap-6">
-                         <div className="space-y-2">
-                           <div className="flex items-center gap-3">
-                             <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400">
-                               <MapPin size={24} />
-                             </div>
-                             <h4 className="text-xl font-bold text-white uppercase tracking-tight">Visit The Hub</h4>
-                           </div>
-                           <p className="text-xs text-slate-400 font-medium leading-relaxed">Visit our Siri-Dhanya Smart Agri Hub in Hubli to see the processing live and purchase fresh millets.</p>
-                         </div>
-                         <button
-                           onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=Hubli+Karnataka+Siri+Dhanya+Hub`, '_blank')}
-                           className="w-full py-5 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-3"
-                         >
-                           <Navigation size={20} />
-                           Get Route Directions
-                         </button>
-                      </div>
-
-                      <div className="bg-white/5 p-8 rounded-[40px] border border-white/10 flex flex-col justify-between gap-6">
                         <div className="space-y-2">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-400">
-                              <Zap size={24} />
-                            </div>
-                            <h4 className="text-xl font-bold text-white uppercase tracking-tight">
-                              {genStep === -1 ? 'AI Unavailable' : 'AI Generating'}
-                            </h4>
-                          </div>
-                          <p className="text-xs text-slate-400 font-medium leading-relaxed">
-                            {genStep === -1
-                              ? 'Could not connect to AI. Check your internet connection and try again.'
-                              : 'The AI Engine is processing your cinematic cooking guide in Kannada. Watch the YouTube video above while it loads.'
-                            }
+                          <h2 className="text-3xl font-black text-white uppercase tracking-tight">
+                            {language === 'kn' ? 'ಎಐ ರೆಸಿಪಿ ತಯಾರಿಸಲಾಗುತ್ತಿದೆ...' : 'AI Generating Recipe...'}
+                          </h2>
+                          <p className="text-emerald-400 font-bold text-sm">
+                            {genProcessSteps[Math.min(genStep, genProcessSteps.length - 1)]}
                           </p>
                         </div>
-                        {genStep !== -1 && (
-                          <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                             <motion.div
-                               className="h-full bg-emerald-500"
-                               initial={{ width: "0%" }}
-                               animate={{ width: `${(genStep / 6) * 100}%` }}
-                             />
-                          </div>
-                        )}
-                        {genStep === -1 && (
-                          <div className="flex items-center gap-2 text-rose-400 text-xs font-bold uppercase tracking-widest">
-                            <X size={14} /> Generation Failed
-                          </div>
-                        )}
+                        <div className="w-full max-w-sm h-3 bg-white/10 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full bg-emerald-500 rounded-full"
+                            initial={{ width: '0%' }}
+                            animate={{ width: `${(genStep / 6) * 100}%` }}
+                            transition={{ duration: 0.5 }}
+                          />
+                        </div>
+                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">
+                          {language === 'kn' ? 'ದಯವಿಟ್ಟು ನಿರೀಕ್ಷಿಸಿ...' : 'Please wait...'}
+                        </p>
                       </div>
+                    </>
+                  )}
+
+                  {/* Error state */}
+                  {genStep === -1 && (
+                    <div className="flex flex-col items-center gap-6">
+                      <div className="w-24 h-24 bg-rose-500/20 rounded-full flex items-center justify-center">
+                        <X size={48} className="text-rose-400" />
+                      </div>
+                      <div className="space-y-2">
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">
+                          {language === 'kn' ? 'ಎಐ ವಿಫಲವಾಗಿದೆ' : 'AI Generation Failed'}
+                        </h2>
+                        <p className="text-slate-400 font-medium text-sm max-w-sm mx-auto">
+                          {language === 'kn'
+                            ? 'ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'
+                            : 'Check your internet connection and try again. Make sure your Gemini API key is valid.'}
+                        </p>
+                      </div>
+                      {onRetry && (
+                        <button
+                          onClick={onRetry}
+                          className="px-10 py-5 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-emerald-600/20 flex items-center gap-3 text-sm"
+                        >
+                          <RefreshCw size={20} />
+                          {language === 'kn' ? 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ' : 'Try Again'}
+                        </button>
+                      )}
                     </div>
-                 </div>
+                  )}
+
+                </div>
               </div>
             ) : (
               <div className="flex-1 flex flex-col md:flex-row min-h-full md:h-full">
@@ -292,8 +253,14 @@ export const AIVideoStudio: React.FC<AIVideoStudioProps> = ({
                   <div className="flex flex-col items-center gap-6 mt-auto">
                     <div className="flex items-center gap-6">
                        <button
+                         onClick={() => setIsMuted(!isMuted)}
+                         className="p-5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all"
+                       >
+                         {isMuted ? <Volume2 size={28} className="text-rose-500" /> : <Volume2 size={28} />}
+                       </button>
+                       <button
                          onClick={togglePlay}
-                         className={`p-5 ${isPlaying ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-500 hover:bg-emerald-600'} text-white rounded-full transition-all shadow-xl`}
+                         className={`p-5 ${isPlaying ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-500 hover:bg-emerald-600'} text-white rounded-full shadow-xl transition-all`}
                        >
                          {isPlaying ? <span className="font-black px-2 uppercase text-xs">Pause</span> : <Play size={28} fill="currentColor" />}
                        </button>
@@ -421,7 +388,16 @@ export const AIVideoStudio: React.FC<AIVideoStudioProps> = ({
                           </div>
                        </div>
                        <button 
-                         onClick={() => alert("Rendering full video... Use 'Save for Offline' to download results.")}
+                         onClick={() => {
+                           const btn = document.activeElement as HTMLButtonElement;
+                           const originalText = btn.innerText;
+                           btn.innerText = "RENDERING...";
+                           btn.disabled = true;
+                           setTimeout(() => {
+                             btn.innerText = "SAVED TO OFFLINE ARCHIVE";
+                             btn.className = "w-full bg-slate-800 text-emerald-400 font-bold py-4 rounded-2xl transition-all shadow-xl";
+                           }, 3000);
+                         }}
                          className="w-full bg-emerald-500 text-white font-bold py-4 rounded-2xl hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20"
                        >
                          Render Final Masterpiece

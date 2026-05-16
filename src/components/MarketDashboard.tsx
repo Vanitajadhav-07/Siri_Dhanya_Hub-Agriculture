@@ -9,6 +9,7 @@ import {
   HelpCircle, ShieldCheck, ChevronDown, Sparkles
 } from 'lucide-react';
 import { GOOGLE_MAPS_API_KEY } from '../lib/config';
+import { millets as milletsData } from '../data/millets';
 
 interface MarketPrice {
   id: string;
@@ -258,19 +259,22 @@ export const MarketDashboard: React.FC<MarketDashboardProps> = ({ language = 'en
   const [selectedMarket, setSelectedMarket] = useState<APMCMarket | null>(null);
   const [isCommunicating, setIsCommunicating] = useState(false);
   const [enabledAlertIds, setEnabledAlertIds] = useState<string[]>([]);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const handleToggleAlert = (id: string, millet: string) => {
     if (enabledAlertIds.includes(id)) {
       setEnabledAlertIds(prev => prev.filter(i => i !== id));
     } else {
       setEnabledAlertIds(prev => [...prev, id]);
-      alert(`ENABLED: You will now receive digital alerts for ${millet} price changes.`);
+      setNotification(`ENABLED: Alerts active for ${millet}.`);
+      setTimeout(() => setNotification(null), 3000);
     }
   };
 
   const handleLocate = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      setNotification("Geolocation not supported.");
+      setTimeout(() => setNotification(null), 3000);
       return;
     }
 
@@ -319,21 +323,40 @@ export const MarketDashboard: React.FC<MarketDashboardProps> = ({ language = 'en
         console.error("Geolocation error:", error);
         setIsLocating(false);
         setLocationStatus(null);
-        alert("Unable to retrieve your location. Showing default markets.");
+        setNotification("Unable to retrieve location.");
+        setTimeout(() => setNotification(null), 3000);
       }
     );
   };
 
-  const initialPrices: MarketPrice[] = [
-    { id: '1', millet: 'Ragi (Finger Millet)', price: 3450, unit: 'qntl', trend: 'up', change: 2.5, volume: '450MT', market: 'Bengaluru APMC', lastUpdated: new Date() },
-    { id: '2', millet: 'Navane (Foxtail)', price: 4200, unit: 'qntl', trend: 'down', change: -1.2, volume: '220MT', market: 'Hubballi Market', lastUpdated: new Date() },
-    { id: '3', millet: 'Sajje (Pearl Millet)', price: 2850, unit: 'qntl', trend: 'stable', change: 0, volume: '850MT', market: 'Kalaburagi APMC', lastUpdated: new Date() },
-    { id: '4', millet: 'Baragu (Proso Millet)', price: 3900, unit: 'qntl', trend: 'up', change: 5.4, volume: '120MT', market: 'Tumakuru Market', lastUpdated: new Date() },
-    { id: '5', millet: 'Oodhalu (Barnyard)', price: 4800, unit: 'qntl', trend: 'up', change: 1.8, volume: '75MT', market: 'Mysuru APMC', lastUpdated: new Date() },
-    { id: '6', millet: 'Same (Little Millet)', price: 4100, unit: 'qntl', trend: 'down', change: -0.8, volume: '310MT', market: 'Ballari Market', lastUpdated: new Date() },
-  ];
+  const initialPrices: MarketPrice[] = milletsData.map(m => ({
+    id: m.id,
+    millet: language === 'kn' ? (m.kannadaName || m.name) : m.name,
+    price: m.price || 0,
+    unit: 'kg',
+    trend: 'up',
+    change: 1.5,
+    volume: `${(m.kg || 0)} KG`,
+    market: 'Hubballi APMC',
+    lastUpdated: new Date()
+  }));
 
   const [prices, setPrices] = useState<MarketPrice[]>(initialPrices);
+
+  // Sync prices when language changes
+  useEffect(() => {
+    setPrices(milletsData.map(m => ({
+      id: m.id,
+      millet: language === 'kn' ? (m.kannadaName || m.name) : m.name,
+      price: m.price || 0,
+      unit: 'kg',
+      trend: 'up',
+      change: 1.5,
+      volume: `${(m.kg || 0)} KG`,
+      market: 'Hubballi APMC',
+      lastUpdated: new Date()
+    })));
+  }, [language]);
 
   const refreshData = () => {
     setIsRefreshing(true);
@@ -417,7 +440,8 @@ export const MarketDashboard: React.FC<MarketDashboardProps> = ({ language = 'en
                           setIsCommunicating(true);
                           setTimeout(() => {
                             setIsCommunicating(false);
-                            alert(`INITIATED: Handshake complete for ${btn.label}. APMC Node is awaiting your credentials.`);
+                            setNotification(`${btn.label} INITIATED: Awaiting Node handshake.`);
+                            setTimeout(() => setNotification(null), 3000);
                             setSelectedMarket(null);
                           }, 1500);
                         }}
@@ -873,44 +897,22 @@ export const MarketDashboard: React.FC<MarketDashboardProps> = ({ language = 'en
                     </button>
                   </div>
 
-                  <div className="aspect-square w-full bg-slate-100 rounded-[32px] overflow-hidden border-2 border-slate-100 shadow-inner relative">
-                    {/* Logic to handle emulator default location (Mountain View) vs actual location */}
-                    {(() => {
-                      const isEmulatorDefault = userCoords &&
-                        Math.abs(userCoords.lat - 37.4221) < 0.01 &&
-                        Math.abs(userCoords.lng - (-122.0841)) < 0.01;
-
-                      const origin = isEmulatorDefault || !userCoords
-                        ? 'Dharwad, Karnataka'
-                        : `${userCoords.lat},${userCoords.lng}`;
-
-                      const mapsKey = "AIzaSyC-SAY0YcBvKrp0UD06nGLsCH-K_PJz3bM";
-
-                      return (
-                        <iframe
-                          width="100%"
-                          height="100%"
-                          frameBorder="0"
-                          style={{ border: 0 }}
-                          src={`https://www.google.com/maps/embed/v1/directions?key=${mapsKey}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(activeRoute.address)}&mode=driving`}
-                          allowFullScreen
-                        ></iframe>
-                      );
-                    })()}
-                    {!GOOGLE_MAPS_API_KEY && (
-                      <div className="absolute inset-0 bg-slate-900/10 backdrop-blur-[2px] flex items-center justify-center p-8 text-center">
-                        <div className="bg-white p-6 rounded-3xl shadow-xl space-y-4">
-                           <Navigation size={40} className="mx-auto text-emerald-500 animate-bounce" />
-                           <p className="text-xs font-bold text-slate-600">Visualizing Route to {activeRoute.name}...</p>
-                           <button
-                             onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(activeRoute.address)}`, '_blank')}
-                             className="w-full py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase"
-                           >
-                             Launch Real-Time Navigation
-                           </button>
-                        </div>
-                      </div>
-                    )}
+                  <div className="aspect-square w-full bg-slate-100 rounded-[32px] border-2 border-slate-100 shadow-inner flex flex-col items-center justify-center gap-5 p-8">
+                    <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl shadow-emerald-500/30">
+                      <Navigation size={36} className="text-white animate-bounce" />
+                    </div>
+                    <div className="text-center space-y-1">
+                      <p className="font-black text-slate-800 text-sm uppercase">{activeRoute.name}</p>
+                      <p className="text-xs text-slate-500">{activeRoute.address}</p>
+                      <p className="text-[10px] text-emerald-600 font-bold uppercase">{activeRoute.distance} · {activeRoute.eta}</p>
+                    </div>
+                    <button
+                      onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(activeRoute.address)}`, '_blank')}
+                      className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2"
+                    >
+                      <Navigation size={16} />
+                      Open in Google Maps
+                    </button>
                   </div>
                 </div>
 
@@ -1011,14 +1013,13 @@ export const MarketDashboard: React.FC<MarketDashboardProps> = ({ language = 'en
 
           <div className="space-y-3 flex-1">
             {FAQ_DATA.map((faq, i) => {
-              const item = (faq as any)[language] || (faq as any).en;
               return (
                 <div key={i} className="border-b border-white/5 last:border-0 pb-4 last:pb-0">
                   <button
                     onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
                     className="w-full py-4 flex items-center justify-between text-left group"
                   >
-                    <span className="text-sm font-bold text-slate-100 group-hover:text-emerald-400 transition-colors pr-4">{item.question}</span>
+                    <span className="text-sm font-bold text-slate-100 group-hover:text-emerald-400 transition-colors pr-4">{faq.question}</span>
                     <ChevronDown size={18} className={`text-slate-500 transition-transform duration-300 ${expandedFaq === i ? 'rotate-180 text-emerald-400' : ''}`} />
                   </button>
                   <AnimatePresence>
@@ -1030,7 +1031,7 @@ export const MarketDashboard: React.FC<MarketDashboardProps> = ({ language = 'en
                         className="overflow-hidden"
                       >
                         <p className="pb-4 text-xs font-medium text-slate-400 leading-relaxed italic border-l-2 border-emerald-500/30 pl-4 ml-1">
-                          {item.answer}
+                          {faq.answer}
                         </p>
                       </motion.div>
                     )}
@@ -1045,6 +1046,26 @@ export const MarketDashboard: React.FC<MarketDashboardProps> = ({ language = 'en
           </button>
         </motion.div>
       </div>
+
+      {/* Floating Notification */}
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] bg-slate-900 text-white px-8 py-4 rounded-[32px] shadow-2xl border border-white/10 flex items-center gap-4 min-w-[320px]"
+          >
+            <div className="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0">
+              <Sparkles size={18} />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-wider flex-1">{notification}</p>
+            <button onClick={() => setNotification(null)}>
+              <X size={14} className="text-slate-500" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -200,6 +200,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                     {millet.price && (
                       <div className="text-[10px] font-black text-white bg-slate-900 px-2 py-1 rounded-lg">
                         ₹{millet.price}/{language === 'kn' ? 'ಕೆಜಿ' : language === 'hi' ? 'किग्रा' : 'kg'}
+                        <span className="ml-1 text-[8px] text-emerald-400 opacity-80">(Mkt)</span>
                       </div>
                     )}
                   </div>
