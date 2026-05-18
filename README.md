@@ -1,4 +1,13 @@
+# ⚠️ Security Update
+
+While uploading my project to GitHub, an automated GitHub security scan detected that the Gemini API key was accidentally exposed inside one of the source code files. I did not upload the API key separately, but it was hardcoded in the frontend file, so GitHub flagged it as a leaked key issue.
+
+I have now removed the exposed key from the code, generated a new API key, added the `.env` file to `.gitignore`, and updated the project securely to prevent future exposure.
+
+---
+
 # 🌾 Siri-Dhanya Smart Agri Hub
+
 ### The Ultimate AI-Powered Ecosystem for Sustainable Millet Agriculture
 
 <p align="center">
@@ -13,6 +22,7 @@
 ---
 
 ## 📌 Vision
+
 **Siri-Dhanya Smart Agri Hub** is a next-generation platform designed to bridge the gap between traditional millet farming and modern technology. Leveraging **Google Gemini AI**, the app provides farmers and consumers with real-time insights, AI-generated culinary masterclasses, and a secure ecosystem for agricultural data.
 
 ---
@@ -20,43 +30,49 @@
 ## ✨ Cutting-Edge Features
 
 ### 🎬 AI Video Studio
-*   **Instant Storyboarding**: Automatically generates 5-scene cinematic cooking masterclasses.
-*   **Multilingual Narration**: AI-powered voiceovers in English, Kannada, and Hindi.
-*   **Technical Precision**: Dynamic camera angles (Close-up, Bird's eye) and lighting effects (Cinematic, Moody) generated via Gemini 2.0 Flash.
+
+* **Instant Storyboarding**: Automatically generates 5-scene cinematic cooking masterclasses.
+* **Multilingual Narration**: AI-powered voiceovers in English, Kannada, and Hindi.
+* **Technical Precision**: Dynamic camera angles (Close-up, Bird's eye) and lighting effects (Cinematic, Moody) generated via Gemini 2.0 Flash.
 
 ### 📊 Market Pulse (Dashboard)
-*   **Real-time Analytics**: Track millet prices and stock levels (Kg) with live Firebase synchronization.
-*   **Market Trends**: Visualized data for Ragi, Navane, Sajje, and more.
+
+* **Real-time Analytics**: Track millet prices and stock levels (Kg) with live Firebase synchronization.
+* **Market Trends**: Visualized data for Ragi, Navane, Sajje, and more.
 
 ### 🤖 AI Advisor & Farming Assistant
-*   **Context-Aware Advice**: Get farming tips based on your current GPS location and local weather conditions.
-*   **Millet DNA Decoder**: Explore the nutritional DNA and benefits of ancient grains.
+
+* **Context-Aware Advice**: Get farming tips based on your current GPS location and local weather conditions.
+* **Millet DNA Decoder**: Explore the nutritional DNA and benefits of ancient grains.
 
 ### 🛡️ Security Vault
-*   **Encrypted Storage**: Securely manage agricultural documents and sensitive data.
-*   **Biometric-ready UI**: Modern, high-security interface for farmer data protection.
+
+* **Encrypted Storage**: Securely manage agricultural documents and sensitive data.
+* **Biometric-ready UI**: Modern, high-security interface for farmer data protection.
 
 ### 🌐 Hyper-Localization
-*   **Full Multi-language Support**: Switch seamlessly between **English (EN)**, **ಕನ್ನಡ (KN)**, and **हिंदी (HI)**.
-*   **Cultural Context**: Content and UI adapt to regional agricultural terminology.
+
+* **Full Multi-language Support**: Switch seamlessly between **English (EN)**, **ಕನ್ನಡ (KN)**, and **हिंदी (HI)**.
+* **Cultural Context**: Content and UI adapt to regional agricultural terminology.
 
 ---
 
 ## 🚀 Tech Stack
 
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | React 19, TypeScript, Motion (Framer), Tailwind CSS 4 |
-| **Mobile Bridge** | Capacitor JS (Android Native Wrapper) |
-| **Intelligence** | Google Gemini AI (Generative AI SDK) |
-| **Backend/DB** | Firebase Auth, Firestore (Real-time NoSQL) |
-| **Build Tool** | Vite 6 |
+| Layer             | Technologies                                          |
+| :---------------- | :---------------------------------------------------- |
+| **Frontend**      | React 19, TypeScript, Motion (Framer), Tailwind CSS 4 |
+| **Mobile Bridge** | Capacitor JS (Android Native Wrapper)                 |
+| **Intelligence**  | Google Gemini AI (Generative AI SDK)                  |
+| **Backend/DB**    | Firebase Auth, Firestore (Real-time NoSQL)            |
+| **Build Tool**    | Vite 6                                                |
 
 ---
 
 ## 🛠️ Quick Start
 
 ### 1. Clone & Install
+
 ```bash
 git clone https://github.com/Vanitajadhav-07/Siri_Dhanya_Hub-Agriculture.git
 cd siri-dhanya-smart-agri-hub
@@ -64,13 +80,17 @@ npm install
 ```
 
 ### 2. Environment Setup
+
 Create a `.env` file in the root:
+
 ```env
 VITE_GEMINI_API_KEY=your_google_gemini_api_key
 ```
+
 Add your `firebase-applet-config.json` to the root directory.
 
 ### 3. Run Development
+
 ```bash
 # Web Preview
 npm run dev
@@ -83,6 +103,7 @@ npm run mobile:open
 ---
 
 ## 📂 Project Structure
+
 ```text
 ├── android/            # Native Android Project (Capacitor)
 ├── src/
@@ -98,7 +119,8 @@ npm run mobile:open
 ---
 
 ## 👩‍💻 Developer
-**Vanita Jadhav**  
+
+**Vanita Jadhav**
 *Passionate about combining Agriculture with Artificial Intelligence.*
 
 📧 [Email Me](mailto:jadhav.vanita2004@gmail.com) | 🔗 [GitHub](https://github.com/Vanitajadhav-07)
@@ -106,9 +128,11 @@ npm run mobile:open
 ---
 
 ## ⭐ Impact
-*   **Sustainable Farming**: Promoting climate-resilient crops.
-*   **Nutritional Revolution**: Making Millets (Superfoods) accessible to the masses.
-*   **Digital Empowerment**: Bringing AI to the fingertips of rural farmers.
+
+* **Sustainable Farming**: Promoting climate-resilient crops.
+* **Nutritional Revolution**: Making Millets (Superfoods) accessible to the masses.
+* **Digital Empowerment**: Bringing AI to the fingertips of rural farmers.
 
 ---
+
 <p align="center">Made with ❤️ for the Indian Agricultural Community</p>
